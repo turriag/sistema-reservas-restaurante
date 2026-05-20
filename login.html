@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabores del Mar - Iniciar Sesión</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920') center/cover;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #8B5A2B 0%, #6B3E1A 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '🍽️';
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 100px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .login-header i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .login-header h1 {
+            color: white;
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 0.85rem;
+        }
+
+        .login-body {
+            padding: 35px 30px;
+        }
+
+        /* Back to home button */
+        .back-to-home {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .back-to-home a {
+            color: #8B5A2B;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .back-to-home a:hover {
+            color: #DAA520;
+            text-decoration: underline;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group i:first-child {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 1.1rem;
+            z-index: 1;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 45px 14px 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #8B5A2B;
+            box-shadow: 0 0 0 4px rgba(139, 90, 43, 0.1);
+        }
+
+        .input-group input.error {
+            border-color: #ef4444;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s;
+            z-index: 1;
+        }
+
+        .password-toggle:hover {
+            color: #8B5A2B;
+        }
+
+        .form-error {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 5px;
+            margin-left: 10px;
+            display: none;
+        }
+
+        .form-error.show {
+            display: block;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.85rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #4b5563;
+        }
+
+        .checkbox-label input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #8B5A2B;
+        }
+
+        .forgot-link {
+            color: #8B5A2B;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .forgot-link:hover {
+            color: #DAA520;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #8B5A2B 0%, #6B3E1A 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(139, 90, 43, 0.4);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .register-link {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+
+        .register-link a {
+            color: #8B5A2B;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Toast notifications */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 12px 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast-info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        @media (max-width: 480px) {
+            .login-body {
+                padding: 25px 20px;
+            }
+            .remember-forgot {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-utensils"></i>
+                <h1>Bienvenido</h1>
+                <p>Inicia sesión para gestionar tus reservas</p>
+            </div>
+            <div class="login-body">
+                <!-- Back to home -->
+                <div class="back-to-home">
+                    <a href="index.html">
+                        <i class="fas fa-home"></i> Volver al inicio
+                    </a>
+                </div>
+
+                <form id="loginForm">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="Correo electrónico" autocomplete="email">
+                        <div class="form-error" id="emailError"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Contraseña" autocomplete="current-password">
+                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                        <div class="form-error" id="passwordError"></div>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Recordarme</span>
+                        </label>
+                        <a href="recuperar-password.html" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <span>Iniciar Sesión</span>
+                    </button>
+
+                    <div class="register-link">
+                        ¿No tienes una cuenta? <a href="register.html">Regístrate aquí</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

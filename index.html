@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabores del Mar - Reserva tu Mesa</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos adicionales para el menú de comida en landing page */
+        .menu-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #fff9f5 0%, #fff 100%);
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .menu-item-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-item-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(139, 90, 43, 0.15);
+        }
+
+        .menu-item-img {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .menu-item-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #8B5A2B;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .menu-item-info {
+            padding: 20px;
+        }
+
+        .menu-item-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2d2d3f;
+        }
+
+        .menu-item-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .menu-item-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #8B5A2B;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-order {
+            background: none;
+            border: 2px solid #8B5A2B;
+            padding: 5px 15px;
+            border-radius: 25px;
+            color: #8B5A2B;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-order:hover {
+            background: #8B5A2B;
+            color: white;
+        }
+
+        /* Sección de contacto */
+        .contact-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+        }
+
+        .contact-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .contact-details {
+            margin-top: 30px;
+        }
+
+        .contact-details p {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .contact-details i {
+            width: 30px;
+            color: #DAA520;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .contact-form button {
+            background: #DAA520;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .contact-form button:hover {
+            background: #8B5A2B;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="landing-page">
+    <nav class="navbar-landing">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-utensils"></i>
+                <span>Sabores del Mar</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home">Inicio</a>
+                <a href="#menu">Menú</a>
+                <a href="#features">Características</a>
+                <a href="#about">Nosotros</a>
+                <a href="#contact">Contacto</a>
+            </div>
+            <div class="nav-buttons">
+                <a href="login.html" class="btn-outline">Iniciar Sesión</a>
+                <a href="register.html" class="btn-primary">Registrarse</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="hero-title">Sabores del Mar<br><span class="highlight">Experiencia Gastronómica Única</span></h1>
+                <p class="hero-subtitle">Descubre los sabores más exclusivos del mar en un ambiente elegante y acogedor. Reserva tu mesa en segundos y disfruta de una experiencia inolvidable.</p>
+                <div class="hero-buttons">
+                    <a href="register.html" class="btn-hero-primary">
+                        <i class="fas fa-calendar-check"></i>
+                        Reservar Ahora
+                    </a>
+                    <a href="#menu" class="btn-hero-secondary">
+                        <i class="fas fa-utensils"></i>
+                        Ver Menú
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Clientes Felices</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">Años de Experiencia</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">4.9</span>
+                        <span class="stat-label">Calificación</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DEL MENÚ -->
+        <section id="menu" class="menu-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Nuestro Menú</span>
+                    <h2>Especialidades del Mar</h2>
+                    <p>Los mejores platillos preparados con ingredientes frescos y pasión</p>
+                </div>
+                <div class="menu-grid">
+                    <div class="menu-item-card">
+                        <div class="menu-item-img" style="background-image: url('https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400')">
+                            <span class="menu-item-tag">⭐ Más pedido</span>
+                        </div>
+                        <div class="menu-item-info">
+                            <h3 class="menu-item-title">Ceviche de Pescado</h3>
+                            <p class="menu-item-desc">Pescado fresco marinado en limón, con cebolla morada, cilantro, ají y cancha serrana.</p>
+                            <div class="menu-item-price">
+                                <span>$45.000</span>
+                                <button class="btn-order" onclick="window.location.href='register.html'">Ordenar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="menu-item-card">
+                        <div class="menu-item-img" style="background-image: url('https://images.unsplash.com/photo-1559847844-5315695dadae?w=400')">
+                            <span class="menu-item-tag">🔥 Popular</span>
+                        </div>
+                        <div class="menu-item-info">
+                            <h3 class="menu-item-title">Arroz con Mariscos</h3>
+                            <p class="menu-item-desc">Arroz premium con camarones, calamares, mejillones y pulpo, acompañado de salsa rosada.</p>
+                            <div class="menu-item-price">
+                                <span>$38.000</span>
+                                <button class="btn-order" onclick="window.location.href='register.html'">Ordenar</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="menu-item-card">
+                        <div class="menu-item-img" style="background-image: url('https://images.unsplash.com/photo-1559847844-5315695dadae?w=400')">
+                            <span class="menu-item-tag">🌊 Especial</span>
+                        </div>
+                        <div class="menu-item-info">
+                            <h3 class="menu-item-title">Cóctel de Camarones</h3>
+                            <p class="menu-item-desc">Camarones frescos con salsa rosada, aguacate y tocineta crujiente.</p>
+                            <div class="menu-item-price">
+                                <span>$32.000</span>
+                                <button class="btn-order" onclick="window.location.href='register.html'">Ordenar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Características</span>
+                    <h2>¿Por qué elegirnos?</h2>
+                    <p>Ofrecemos la mejor experiencia en reservas de restaurantes</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Reservas Rápidas</h3>
+                        <p>Realiza tus reservas en menos de 30 segundos desde cualquier dispositivo</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3>Notificaciones Automáticas</h3>
+                        <p>Recibe confirmaciones y recordatorios de tus reservas</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Gestión Administrativa</h3>
+                        <p>Panel completo para administrar mesas, clientes y reservas</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>Disponibilidad 24/7</h3>
+                        <p>Consulta disponibilidad en tiempo real las 24 horas</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <div class="container">
+                <div class="about-content">
+                    <div class="about-text">
+                        <span class="section-badge">Nosotros</span>
+                        <h2>Más que un restaurante,<br>una experiencia única</h2>
+                        <p>Con más de 15 años en la industria gastronómica, nos especializamos en ofrecer los mejores platillos de la cocina internacional con un toque de innovación y tradición.</p>
+                        <div class="about-features">
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Chefs con Estrella Michelin</span>
+                            </div>
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Ingredientes Frescos y Locales</span>
+                            </div>
+                            <div class="about-feature">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Ambiente Elegante y Acogedor</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-image">
+                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600" alt="Restaurante">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE CONTACTO -->
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h3>¿Tienes alguna pregunta?</h3>
+                        <p>Contáctanos y te atenderemos a la brevedad posible.</p>
+                        <div class="contact-details">
+                            <p><i class="fas fa-map-marker-alt"></i> Cra. 45 #123-45, Barranquilla</p>
+                            <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                            <p><i class="fas fa-envelope"></i> info@saboresdelmar.com</p>
+                            <p><i class="fas fa-clock"></i> Lunes a Domingo: 9:00 am - 10:00 pm</p>
+                        </div>
+                    </div>
+                    <div class="contact-form">
+                        <h3>Envíanos un mensaje</h3>
+                        <form id="contactForm">
+                            <input type="text" id="contactNombre" placeholder="Nombre completo" required>
+                            <input type="email" id="contactEmail" placeholder="Correo electrónico" required>
+                            <input type="tel" id="contactTelefono" placeholder="Teléfono">
+                            <textarea id="contactMensaje" placeholder="¿En qué podemos ayudarte?" required></textarea>
+                            <button type="submit">Enviar mensaje</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-utensils"></i> Sabores del Mar</h3>
+                    <p>La mejor experiencia gastronómica en Barranquilla</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Cra. 45 #123-45, Barranquilla</p>
+                    <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                    <p><i class="fas fa-envelope"></i> info@saboresdelmar.com</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Horario</h4>
+                    <p>Lunes a Domingo: 9:00 am - 10:00 pm</p>
+                    <p>Cocina: Hasta las 11:00 pm "Envios"</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Síguenos</h4>
+                    <div style="display: flex; gap: 15px;">
+                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Sabores del Mar. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Manejo del formulario de contacto
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('📧 Mensaje enviado. Nos pondremos en contacto contigo pronto.');
+                this.reset();
+            });
+        }
+    </script>
+</body>
+</html>

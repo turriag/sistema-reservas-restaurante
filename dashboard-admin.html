@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabores del Mar - Panel Administrador</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Admin Dashboard Layout */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            background: var(--color-gray-50);
+        }
+
+        /* Admin Sidebar */
+        .admin-sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            color: var(--color-white);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all var(--transition-base);
+            z-index: 100;
+        }
+
+        .admin-sidebar-header {
+            padding: var(--spacing-xl);
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-secondary);
+        }
+
+        .admin-logo i {
+            margin-right: var(--spacing-sm);
+        }
+
+        .admin-user-info {
+            margin-top: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .admin-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-md);
+        }
+
+        .admin-avatar i {
+            font-size: 2.5rem;
+            color: var(--color-white);
+        }
+
+        .admin-name {
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .admin-role {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            background: rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .admin-email {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: var(--spacing-xs);
+        }
+
+        .admin-nav {
+            padding: var(--spacing-lg) 0;
+        }
+
+        .nav-section {
+            padding: var(--spacing-md) var(--spacing-xl);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .admin-nav-item {
+            padding: var(--spacing-md) var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            color: rgba(255, 255, 255, 0.7);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .admin-nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-white);
+        }
+
+        .admin-nav-item.active {
+            background: linear-gradient(90deg, var(--color-primary) 0%, transparent 100%);
+            color: var(--color-white);
+            border-left: 3px solid var(--color-secondary);
+        }
+
+        .admin-nav-item i {
+            width: 24px;
+            font-size: 1.25rem;
+        }
+
+        /* Admin Main Content */
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            padding: var(--spacing-xl);
+        }
+
+        /* Admin Top Bar */
+        .admin-top-bar {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md) var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-page-title h2 {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .admin-page-title p {
+            color: var(--color-gray-500);
+            font-size: 0.875rem;
+        }
+
+        .admin-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .admin-logout {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--color-gray-100);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .admin-logout:hover {
+            background: var(--color-error);
+            color: var(--color-white);
+        }
+
+        /* Back to home button */
+        .back-to-home {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .back-to-home a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all var(--transition-fast);
+        }
+
+        .back-to-home a:hover {
+            color: var(--color-primary-dark);
+            text-decoration: underline;
+        }
+
+        /* Stats Grid */
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .admin-stat-card {
+            background: linear-gradient(135deg, var(--color-white) 0%, var(--color-gray-50) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .admin-stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .admin-stat-info h4 {
+            color: var(--color-gray-500);
+            font-size: 0.875rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .admin-stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-gray-800);
+        }
+
+        .admin-stat-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-secondary-light) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-stat-icon i {
+            font-size: 1.5rem;
+            color: var(--color-primary);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .chart-card {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-gray-700);
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-gray-100);
+        }
+
+        .activity-item {
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--color-gray-100);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--color-gray-100);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-icon i {
+            font-size: 1rem;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--color-gray-400);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            max-width: 90%;
+            width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform var(--transition-base);
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Formulario moderno */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2d2d3f;
+            font-size: 0.85rem;
+        }
+
+        .form-label.required::after {
+            content: '*';
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        .form-control-modern {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-modern:focus {
+            outline: none;
+            border-color: #8B5A2B;
+            box-shadow: 0 0 0 3px rgba(139, 90, 43, 0.1);
+        }
+
+        /* Toast notification (en lugar de alerts) */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 12px 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast-info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .admin-stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-logo">
+                    <i class="fas fa-utensils"></i>
+                    <span>Sabores del Mar</span>
+                </div>
+                <div class="admin-user-info">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div class="admin-name" id="adminName">Cargando...</div>
+                    <div class="admin-role">Administrador</div>
+                    <div class="admin-email" id="adminEmail">admin@restaurante.com</div>
+                </div>
+            </div>
+            <nav class="admin-nav">
+                <div class="nav-section">Principal</div>
+                <div class="admin-nav-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </div>
+                
+                <div class="nav-section">Gestión</div>
+                <div class="admin-nav-item" data-page="clientes">
+                    <i class="fas fa-users"></i>
+                    <span>Clientes</span>
+                </div>
+                <div class="admin-nav-item" data-page="mesas">
+                    <i class="fas fa-chair"></i>
+                    <span>Mesas</span>
+                </div>
+                <div class="admin-nav-item" data-page="reservas">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Reservas</span>
+                </div>
+                <div class="admin-nav-item" data-page="administradores">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Administradores</span>
+                </div>
+                
+                <div class="nav-section">Reportes</div>
+                <div class="admin-nav-item" data-page="historial">
+                    <i class="fas fa-history"></i>
+                    <span>Historial</span>
+                </div>
+                <div class="admin-nav-item" data-page="notificaciones">
+                    <i class="fas fa-bell"></i>
+                    <span>Notificaciones</span>
+                </div>
+                <div class="admin-nav-item" data-page="reportes">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reportes</span>
+                </div>
+                
+                <div class="nav-section">Sistema</div>
+                <div class="admin-nav-item" data-page="configuracion">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+                <div class="admin-nav-item" data-page="backup">
+                    <i class="fas fa-database"></i>
+                    <span>Backup</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Top Bar -->
+            <div class="admin-top-bar">
+                <div class="admin-page-title">
+                    <h2 id="adminPageTitle">Dashboard</h2>
+                    <p id="adminPageDescription">Panel de control principal</p>
+                </div>
+                <div class="admin-actions">
+                    <div class="admin-logout" id="adminLogoutBtn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to home -->
+            <div class="back-to-home">
+                <a href="index.html">
+                    <i class="fas fa-home"></i> Volver al inicio
+                </a>
+            </div>
+
+            <!-- Dynamic Content -->
+            <div id="adminDynamicContent">
+                <!-- Dashboard Content will be loaded here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL ADMINISTRADOR -->
+    <div id="adminModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalAdminTitle">Nuevo Administrador</h3>
+                <button class="modal-close" onclick="adminDashboard.cerrarModalAdmin()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="adminForm">
+                    <input type="hidden" id="adminId">
+                    <div class="form-group">
+                        <label class="form-label required">Nombre completo</label>
+                        <input type="text" id="adminNombre" class="form-control-modern" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">Correo electrónico</label>
+                        <input type="email" id="adminEmail" class="form-control-modern" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Teléfono</label>
+                        <input type="tel" id="adminTelefono" class="form-control-modern">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">Contraseña</label>
+                        <input type="password" id="adminPassword" class="form-control-modern" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">Rol</label>
+                        <select id="adminRol" class="form-control-modern">
+                            <option value="administrador">Administrador</option>
+                            <option value="superadmin">Super Administrador</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-primary" onclick="adminDashboard.cerrarModalAdmin()">Cancelar</button>
+                <button class="btn-primary" onclick="adminDashboard.guardarAdmin()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIBRERÍA DE SUPABASE (PRIMERO) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- TUS ARCHIVOS (DESPUÉS) -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin-dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</body>
+</html>

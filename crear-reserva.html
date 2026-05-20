@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Sabores del Mar - Crear Reserva</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <i class="fas fa-utensils"></i>
+                    <span>Sabores del Mar</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-name" id="userName">Cargando...</div>
+                    <div class="user-email" id="userEmail">cargando@email.com</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item" onclick="window.location.href='dashboard-cliente.html'">
+                    <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                </div>
+                <div class="nav-item active" onclick="window.location.href='crear-reserva.html'">
+                    <i class="fas fa-calendar-plus"></i><span>Hacer Reserva</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='disponibilidad.html'">
+                    <i class="fas fa-search"></i><span>Consultar Disponibilidad</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='mis-reservas.html'">
+                    <i class="fas fa-list-alt"></i><span>Mis Reservas</span>
+                </div>
+                <div class="nav-item" onclick="window.location.href='dashboard-cliente.html'">
+                    <i class="fas fa-user"></i><span>Mi Perfil</span>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="top-bar">
+                <div class="page-title">
+                    <h2>Hacer una Reserva</h2>
+                    <p>Completa los datos y elige tu mesa favorita</p>
+                </div>
+                <div class="user-actions">
+                    <div class="logout-btn" onclick="authService.logout()">
+                        <i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to home -->
+            <div style="margin-bottom: 20px;">
+                <a href="index.html" style="color: #8B5A2B; text-decoration: none;">
+                    <i class="fas fa-home"></i> Volver al inicio
+                </a>
+            </div>
+
+            <div class="section-card">
+                <!-- Información del cliente -->
+                <div class="cliente-info" style="background: linear-gradient(135deg, #fef3e8, #fae8d8); border-radius: 20px; padding: 20px; margin-bottom: 30px; display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 55px; height: 55px; background: linear-gradient(135deg, #8B5A2B, #DAA520); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h3 id="clienteNombre" style="margin: 0; font-size: 1rem;">Cargando...</h3>
+                        <p id="clienteEmail" style="margin: 5px 0 0; font-size: 0.85rem; color: #666;">cargando@email.com</p>
+                    </div>
+                </div>
+
+                <form id="reservaForm">
+                    <div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 25px;">
+                        <!-- FECHA -->
+                        <div class="form-group">
+                            <label class="form-label required"><i class="fas fa-calendar-alt"></i> Fecha</label>
+                            <input type="date" id="fecha" class="form-control-modern">
+                            <div class="error-message" id="fechaError"></div>
+                        </div>
+                        
+                        <!-- HORA -->
+                        <div class="form-group">
+                            <label class="form-label required"><i class="fas fa-clock"></i> Hora</label>
+                            <div class="horario-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 5px;">
+                                <!-- MAÑANA -->
+                                <div class="hora-option" data-hora="09:00">9:00 AM</div>
+                                <div class="hora-option" data-hora="10:00">10:00 AM</div>
+                                <div class="hora-option" data-hora="11:00">11:00 AM</div>
+                                <div class="hora-option" data-hora="12:00">12:00 PM</div>
+                                
+                                <!-- TARDE -->
+                                <div class="hora-option" data-hora="13:00">1:00 PM</div>
+                                <div class="hora-option" data-hora="14:00">2:00 PM</div>
+                                <div class="hora-option" data-hora="15:00">3:00 PM</div>
+                                <div class="hora-option" data-hora="16:00">4:00 PM</div>
+                                
+                                <!-- NOCHE -->
+                                <div class="hora-option" data-hora="17:00">5:00 PM</div>
+                                <div class="hora-option" data-hora="18:00">6:00 PM</div>
+                                <div class="hora-option" data-hora="19:00">7:00 PM</div>
+                                <div class="hora-option" data-hora="20:00">8:00 PM</div>
+                                
+                                <!-- CIERRE (2 columnas) -->
+                                <div class="hora-option" data-hora="21:00" style="grid-column: span 2;">9:00 PM</div>
+                                <div class="hora-option" data-hora="22:00" style="grid-column: span 2;">10:00 PM</div>
+                            </div>
+                            <div class="error-message" id="horaError"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 25px;">
+                        <!-- PERSONAS -->
+                        <div class="form-group">
+                            <label class="form-label required"><i class="fas fa-users"></i> Personas</label>
+                            <select id="personas" class="form-control-modern">
+                                <option value="">Selecciona</option>
+                                <option value="1">1 persona</option>
+                                <option value="2">2 personas</option>
+                                <option value="3">3 personas</option>
+                                <option value="4">4 personas</option>
+                                <option value="5">5 personas</option>
+                                <option value="6">6 personas</option>
+                                <option value="7">7 personas</option>
+                                <option value="8">8 personas</option>
+                            </select>
+                            <div class="error-message" id="personasError"></div>
+                        </div>
+                        
+                        <!-- MESAS -->
+                        <div class="form-group">
+                            <label class="form-label required"><i class="fas fa-chair"></i> Selecciona tu Mesa</label>
+                            <div id="mesasContainer" class="mesas-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; max-height: 300px; overflow-y: auto; padding: 5px;">
+                                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">
+                                    <i class="fas fa-calendar-alt" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                                    Selecciona fecha, hora y personas para ver las mesas disponibles
+                                </div>
+                            </div>
+                            <div class="error-message" id="mesaError"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- OBSERVACIONES -->
+                    <div class="form-group full-width" style="grid-column: span 2;">
+                        <label class="form-label"><i class="fas fa-pen"></i> Observaciones (opcional)</label>
+                        <textarea id="observaciones" class="form-control-modern" rows="3" placeholder="¿Alguna preferencia especial? (alergias, celebraciones, ubicación...)"></textarea>
+                    </div>
+                    
+                    <!-- RESUMEN -->
+                    <div id="resumenReserva" class="resumen-reserva" style="background: linear-gradient(135deg, #f5e6d3, #f0d5b5); border-radius: 20px; padding: 20px; margin-top: 25px; display: none;">
+                        <div style="font-weight: 700; margin-bottom: 15px; color: #6B3E1A;"><i class="fas fa-clipboard-list"></i> Resumen de tu reserva</div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-calendar-alt"></i> <span id="resumenFecha">-</span></div>
+                            <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-clock"></i> <span id="resumenHora">-</span></div>
+                            <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-users"></i> <span id="resumenPersonas">-</span></div>
+                            <div style="display: flex; align-items: center; gap: 10px;"><i class="fas fa-chair"></i> <span id="resumenMesa">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- BOTONES -->
+                    <div class="btn-group" style="display: flex; gap: 15px; margin-top: 30px;">
+                        <button type="button" class="btn-outline-primary" id="cancelarBtn" style="flex: 1; padding: 14px;">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary" id="submitBtn" style="flex: 1; padding: 14px;">
+                            <i class="fas fa-check"></i> Confirmar Reserva
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- LOADER -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/crear-reserva.js"></script>
+</body>
+</html>
