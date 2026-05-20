@@ -1,429 +1,538 @@
-/**
- * Sistema de Reservas de Restaurante
- * Lógica de registro - Con toasts
- * @version 2.2.0
- */
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabores del Mar - Crear Cuenta</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .register-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            padding: var(--spacing-xl);
+        }
 
-console.log('🔵 register.js cargado');
+        .register-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920') center/cover;
+            opacity: 0.1;
+            pointer-events: none;
+        }
 
-class RegisterController {
-    constructor() {
-        this.currentStep = 1;
-        this.totalSteps = 3;
-        
-        this.form = document.getElementById('registerForm');
-        this.step1Content = document.getElementById('step1Content');
-        this.step2Content = document.getElementById('step2Content');
-        this.step3Content = document.getElementById('step3Content');
-        this.prevBtn = document.getElementById('prevBtn');
-        this.nextBtn = document.getElementById('nextBtn');
-        this.submitBtn = document.getElementById('submitBtn');
-        
-        this.nombreInput = document.getElementById('nombre');
-        this.emailInput = document.getElementById('email');
-        this.telefonoInput = document.getElementById('telefono');
-        this.passwordInput = document.getElementById('password');
-        this.confirmInput = document.getElementById('confirmPassword');
-        this.terminosCheckbox = document.getElementById('terminos');
-        
-        this.init();
-    }
-    
-    init() {
-        console.log('RegisterController iniciado');
-        
-        // Verificar que supabaseClient existe
-        if (typeof supabaseClient === 'undefined' || !supabaseClient) {
-            console.error('supabaseClient no está disponible');
-            this.mostrarNotificacion('Error de conexión. Recarga la página.', 'error');
-            return;
+        .register-card {
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            width: 100%;
+            max-width: 550px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: fadeInUp 0.6s ease;
         }
-        
-        console.log('✅ supabaseClient disponible');
-        this.setupEventListeners();
-        this.setupPasswordStrength();
-        this.updateStepDisplay();
-        this.actualizarBotonRegistro();
-    }
-    
-    actualizarBotonRegistro() {
-        if (!this.submitBtn) return;
-        // El botón se habilita solo en el paso 3 Y con términos aceptados
-        const habilitado = (this.currentStep === this.totalSteps) && this.terminosCheckbox?.checked;
-        this.submitBtn.disabled = !habilitado;
-    }
-    
-    setupEventListeners() {
-        if (this.prevBtn) this.prevBtn.addEventListener('click', () => this.prevStep());
-        if (this.nextBtn) this.nextBtn.addEventListener('click', () => this.nextStep());
-        if (this.form) {
-            this.form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.handleRegister();
-            });
+
+        .register-card::-webkit-scrollbar {
+            width: 8px;
         }
-        
-        if (this.nombreInput) this.nombreInput.addEventListener('input', () => this.validateNombre());
-        if (this.emailInput) this.emailInput.addEventListener('input', () => this.validateEmail());
-        if (this.telefonoInput) this.telefonoInput.addEventListener('input', () => this.validateTelefono());
-        if (this.passwordInput) {
-            this.passwordInput.addEventListener('input', () => {
-                this.validatePassword();
-                this.updatePasswordStrength();
-            });
+
+        .register-card::-webkit-scrollbar-track {
+            background: var(--color-gray-100);
+            border-radius: 4px;
         }
-        if (this.confirmInput) this.confirmInput.addEventListener('input', () => this.validateConfirmPassword());
-        
-        // ============================================
-        // CORRECCIÓN: Habilitar botón cuando se aceptan términos
-        // ============================================
-        if (this.terminosCheckbox) {
-            this.terminosCheckbox.addEventListener('change', () => {
-                this.actualizarBotonRegistro();
-            });
+
+        .register-card::-webkit-scrollbar-thumb {
+            background: var(--color-primary);
+            border-radius: 4px;
         }
-        
-        const togglePassword = document.getElementById('togglePassword');
-        if (togglePassword) {
-            togglePassword.addEventListener('click', () => {
-                const type = this.passwordInput.type === 'password' ? 'text' : 'password';
-                this.passwordInput.type = type;
-                togglePassword.classList.toggle('fa-eye');
-                togglePassword.classList.toggle('fa-eye-slash');
-            });
+
+        .register-header {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            padding: var(--spacing-xl);
+            text-align: center;
+            color: var(--color-white);
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
-        
-        const verTerminos = document.getElementById('verTerminos');
-        if (verTerminos) {
-            verTerminos.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.showModal();
-            });
+
+        .register-header i {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
         }
-        
-        const modalClose = document.querySelector('.modal-close');
-        if (modalClose) {
-            modalClose.addEventListener('click', () => this.hideModal());
+
+        .register-header h1 {
+            color: var(--color-white);
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-xs);
         }
-        
-        const aceptarTerminos = document.getElementById('aceptarTerminos');
-        if (aceptarTerminos) {
-            aceptarTerminos.addEventListener('click', () => {
-                if (this.terminosCheckbox) {
-                    this.terminosCheckbox.checked = true;
-                    this.actualizarBotonRegistro();
-                }
-                this.hideModal();
-            });
+
+        .register-header p {
+            opacity: 0.9;
+            font-size: 0.875rem;
         }
-    }
-    
-    nextStep() {
-        if (this.validateCurrentStep()) {
-            if (this.currentStep < this.totalSteps) {
-                this.currentStep++;
-                this.updateStepDisplay();
-                this.actualizarBotonRegistro();
+
+        .register-body {
+            padding: var(--spacing-xl);
+        }
+
+        .back-to-home {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .back-to-home a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .back-to-home a:hover {
+            color: var(--color-secondary);
+            text-decoration: underline;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gray-400);
+            font-size: 1rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 2px solid var(--color-gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            transition: all var(--transition-fast);
+            font-family: inherit;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(139, 90, 43, 0.1);
+        }
+
+        .input-group input.error,
+        .input-group select.error {
+            border-color: var(--color-error);
+        }
+
+        .password-strength {
+            margin-top: var(--spacing-xs);
+            height: 4px;
+            background: var(--color-gray-200);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width var(--transition-base);
+        }
+
+        .password-strength-text {
+            font-size: 0.75rem;
+            margin-top: var(--spacing-xs);
+            color: var(--color-gray-500);
+        }
+
+        .strength-weak { background: var(--color-error); width: 33%; }
+        .strength-medium { background: var(--color-warning); width: 66%; }
+        .strength-strong { background: var(--color-success); width: 100%; }
+
+        .terms-checkbox {
+            margin: var(--spacing-lg) 0;
+        }
+
+        .terms-checkbox label {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--color-gray-600);
+        }
+
+        .terms-checkbox input {
+            margin-top: 0.125rem;
+            cursor: pointer;
+        }
+
+        .terms-checkbox a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: var(--color-white);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .btn-register:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login-link {
+            text-align: center;
+            color: var(--color-gray-600);
+            font-size: 0.875rem;
+        }
+
+        .login-link a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--color-gray-200);
+            z-index: 0;
+        }
+
+        .step {
+            text-align: center;
+            z-index: 1;
+            background: var(--color-white);
+            flex: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--color-gray-200);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+            transition: all var(--transition-base);
+        }
+
+        .step.active .step-number {
+            background: var(--color-primary);
+            color: var(--color-white);
+        }
+
+        .step.completed .step-number {
+            background: var(--color-success);
+            color: var(--color-white);
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            color: var(--color-gray-500);
+        }
+
+        .step.active .step-label {
+            color: var(--color-primary);
+            font-weight: 500;
+        }
+
+        /* Toast notifications */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            min-width: 280px;
+            max-width: 400px;
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            border-left: 4px solid;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .toast-success {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, #fff 0%, #f0fdf4 100%);
+        }
+
+        .toast-success i {
+            color: #10b981;
+        }
+
+        .toast-error {
+            border-left-color: #ef4444;
+            background: linear-gradient(135deg, #fff 0%, #fef2f2 100%);
+        }
+
+        .toast-error i {
+            color: #ef4444;
+        }
+
+        .toast-info {
+            border-left-color: #3b82f6;
+            background: linear-gradient(135deg, #fff 0%, #eff6ff 100%);
+        }
+
+        .toast-info i {
+            color: #3b82f6;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .toast-close:hover {
+            color: #666;
+        }
+
+        @media (max-width: 640px) {
+            .register-container {
+                padding: var(--spacing-md);
+            }
+            
+            .register-body {
+                padding: var(--spacing-lg);
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            
+            .step-label {
+                display: none;
+            }
+            
+            .toast-notification {
+                left: 20px;
+                right: 20px;
+                min-width: auto;
+                max-width: none;
             }
         }
-    }
-    
-    prevStep() {
-        if (this.currentStep > 1) {
-            this.currentStep--;
-            this.updateStepDisplay();
-            this.actualizarBotonRegistro();
-        }
-    }
-    
-    updateStepDisplay() {
-        if (this.step1Content) this.step1Content.style.display = this.currentStep === 1 ? 'block' : 'none';
-        if (this.step2Content) this.step2Content.style.display = this.currentStep === 2 ? 'block' : 'none';
-        if (this.step3Content) this.step3Content.style.display = this.currentStep === 3 ? 'block' : 'none';
-        
-        if (this.prevBtn) this.prevBtn.style.display = this.currentStep > 1 ? 'flex' : 'none';
-        if (this.nextBtn) this.nextBtn.style.display = this.currentStep < this.totalSteps ? 'flex' : 'none';
-        if (this.submitBtn) this.submitBtn.style.display = this.currentStep === this.totalSteps ? 'flex' : 'none';
-        
-        for (let i = 1; i <= this.totalSteps; i++) {
-            const step = document.getElementById(`step${i}`);
-            if (step) {
-                step.classList.remove('active', 'completed');
-                if (i === this.currentStep) step.classList.add('active');
-                else if (i < this.currentStep) step.classList.add('completed');
-            }
-        }
-        
-        if (this.currentStep === 3) {
-            this.updateResumen();
-            this.actualizarBotonRegistro();
-        }
-    }
-    
-    validateCurrentStep() {
-        switch(this.currentStep) {
-            case 1: return this.validateStep1();
-            case 2: return this.validateStep2();
-            default: return true;
-        }
-    }
-    
-    validateStep1() {
-        let isValid = true;
-        isValid = this.validateNombre() && isValid;
-        isValid = this.validateEmail() && isValid;
-        isValid = this.validateTelefono() && isValid;
-        return isValid;
-    }
-    
-    validateStep2() {
-        let isValid = true;
-        isValid = this.validatePassword() && isValid;
-        isValid = this.validateConfirmPassword() && isValid;
-        return isValid;
-    }
-    
-    validateNombre() {
-        const nombre = this.nombreInput?.value.trim();
-        const errorElement = document.getElementById('nombreError');
-        if (!nombre) {
-            if (errorElement) errorElement.textContent = 'El nombre es requerido';
-            return false;
-        }
-        if (nombre.length < 3) {
-            if (errorElement) errorElement.textContent = 'El nombre debe tener al menos 3 caracteres';
-            return false;
-        }
-        if (errorElement) errorElement.textContent = '';
-        return true;
-    }
-    
-    validateEmail() {
-        const email = this.emailInput?.value.trim();
-        const errorElement = document.getElementById('emailError');
-        if (!email) {
-            if (errorElement) errorElement.textContent = 'El email es requerido';
-            return false;
-        }
-        if (!email.includes('@') || !email.includes('.')) {
-            if (errorElement) errorElement.textContent = 'Email inválido';
-            return false;
-        }
-        if (errorElement) errorElement.textContent = '';
-        return true;
-    }
-    
-    validateTelefono() {
-        const telefono = this.telefonoInput?.value.trim();
-        const errorElement = document.getElementById('telefonoError');
-        if (!telefono) {
-            if (errorElement) errorElement.textContent = 'El teléfono es requerido';
-            return false;
-        }
-        if (telefono.length < 10 || telefono.length > 10) {
-            if (errorElement) errorElement.textContent = 'Teléfono inválido (10 dígitos)';
-            return false;
-        }
-        if (errorElement) errorElement.textContent = '';
-        return true;
-    }
-    
-    validatePassword() {
-        const password = this.passwordInput?.value;
-        const errorElement = document.getElementById('passwordError');
-        if (!password) {
-            if (errorElement) errorElement.textContent = 'La contraseña es requerida';
-            return false;
-        }
-        if (password.length < 6) {
-            if (errorElement) errorElement.textContent = 'Mínimo 6 caracteres';
-            return false;
-        }
-        if (errorElement) errorElement.textContent = '';
-        return true;
-    }
-    
-    validateConfirmPassword() {
-        const password = this.passwordInput?.value;
-        const confirm = this.confirmInput?.value;
-        const errorElement = document.getElementById('confirmError');
-        if (password !== confirm) {
-            if (errorElement) errorElement.textContent = 'Las contraseñas no coinciden';
-            return false;
-        }
-        if (errorElement) errorElement.textContent = '';
-        return true;
-    }
-    
-    setupPasswordStrength() {
-        if (!this.passwordInput) return;
-        this.passwordInput.addEventListener('input', () => this.updatePasswordStrength());
-    }
-    
-    updatePasswordStrength() {
-        const password = this.passwordInput?.value || '';
-        const strengthBar = document.getElementById('passwordStrength');
-        const strengthText = document.getElementById('passwordStrengthText');
-        if (!strengthBar) return;
-        
-        if (password.length === 0) {
-            strengthBar.style.width = '0%';
-            if (strengthText) strengthText.textContent = '';
-            return;
-        }
-        
-        if (password.length < 6) {
-            strengthBar.style.width = '33%';
-            strengthBar.style.background = '#ef4444';
-            if (strengthText) strengthText.textContent = 'Contraseña débil';
-        } else if (password.length < 8) {
-            strengthBar.style.width = '66%';
-            strengthBar.style.background = '#f59e0b';
-            if (strengthText) strengthText.textContent = 'Contraseña mediana';
-        } else {
-            strengthBar.style.width = '100%';
-            strengthBar.style.background = '#10b981';
-            if (strengthText) strengthText.textContent = 'Contraseña segura';
-        }
-    }
-    
-    updateResumen() {
-        const resumenDiv = document.getElementById('resumenDatos');
-        if (resumenDiv) {
-            resumenDiv.innerHTML = `
-                <div><strong>📝 Nombre:</strong> ${this.nombreInput?.value || ''}</div>
-                <div><strong>📧 Email:</strong> ${this.emailInput?.value || ''}</div>
-                <div><strong>📱 Teléfono:</strong> ${this.telefonoInput?.value || ''}</div>
-            `;
-        }
-    }
-    
-    async handleRegister() {
-        if (!this.terminosCheckbox?.checked) {
-            this.mostrarNotificacion('Debes aceptar los términos y condiciones', 'warning');
-            return;
-        }
-        
-        const userData = {
-            nombre: this.nombreInput?.value.trim(),
-            email: this.emailInput?.value.trim(),
-            telefono: this.telefonoInput?.value.trim(),
-            password: this.passwordInput?.value
-        };
-        
-        // Validaciones finales
-        if (!userData.nombre || !userData.email || !userData.telefono || !userData.password) {
-            this.mostrarNotificacion('Por favor completa todos los campos', 'warning');
-            return;
-        }
-        
-        if (userData.password.length < 6) {
-            this.mostrarNotificacion('La contraseña debe tener al menos 6 caracteres', 'warning');
-            return;
-        }
-        
-        this.setLoading(true);
-        
-        try {
-            if (!supabaseClient) throw new Error('Conexión no disponible');
-            
-            console.log('Registrando:', userData.email);
-            
-            // 1. Registrar en Supabase Auth
-            const { data, error: authError } = await supabaseClient.auth.signUp({
-                email: userData.email,
-                password: userData.password,
-                options: {
-                    data: {
-                        nombre: userData.nombre
-                    },
-                    emailRedirectTo: window.location.origin + '/confirmar-email.html'
-                }
-            });
-            
-            if (authError) throw new Error(authError.message);
-            
-            console.log('Auth exitoso');
-            
-            // 2. Registrar en tabla clientes
-            const { error: clienteError } = await supabaseClient
-                .from('clientes')
-                .insert([{
-                    nombre_cliente: userData.nombre,
-                    correo: userData.email,
-                    telefono: userData.telefono,
-                    estado: 'activo'
-                }]);
-            
-            if (clienteError) throw new Error(clienteError.message);
-            
-            this.mostrarNotificacion('✅ ¡Registro exitoso! Redirigiendo al login...', 'success');
-            
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 2000);
-            
-        } catch (error) {
-            console.error('Error:', error);
-            this.mostrarNotificacion('Error: ' + error.message, 'error');
-        } finally {
-            this.setLoading(false);
-        }
-    }
-    
-    setLoading(loading) {
-        if (!this.submitBtn) return;
-        if (loading) {
-            this.submitBtn.disabled = true;
-            this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
-        } else {
-            this.submitBtn.disabled = false;
-            this.submitBtn.innerHTML = '<i class="fas fa-user-check"></i> Registrarse';
-        }
-    }
-    
-    showModal() {
-        const modal = document.getElementById('terminosModal');
-        if (modal) modal.classList.add('show');
-    }
-    
-    hideModal() {
-        const modal = document.getElementById('terminosModal');
-        if (modal) modal.classList.remove('show');
-    }
-    
-    // ============================================
-    // NOTIFICACIONES TIPO TOAST
-    // ============================================
-    
-    mostrarNotificacion(mensaje, tipo = 'info') {
-        const toast = document.createElement('div');
-        toast.className = `toast-notification toast-${tipo}`;
-        toast.innerHTML = `
-            <div class="toast-content">
-                <i class="fas ${tipo === 'success' ? 'fa-check-circle' : tipo === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-                <span>${mensaje}</span>
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="register-header">
+                <i class="fas fa-user-plus"></i>
+                <h1>Crear Cuenta</h1>
+                <p>Regístrate para disfrutar de nuestros servicios</p>
             </div>
-            <button class="toast-close">&times;</button>
-        `;
-        
-        document.body.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 100);
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-        
-        toast.querySelector('.toast-close').onclick = () => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        };
-    }
-}
+            <div class="register-body">
+                <!-- Back to home -->
+                <div class="back-to-home">
+                    <a href="index.html">
+                        <i class="fas fa-home"></i> Volver al inicio
+                    </a>
+                </div>
 
-// Inicializar
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM listo, creando RegisterController');
-    window.registerController = new RegisterController();
-});
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step active" id="step1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Datos Personales</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Seguridad</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Confirmación</div>
+                    </div>
+                </div>
+
+                <form id="registerForm">
+                    <!-- Paso 1: Datos Personales -->
+                    <div id="step1Content">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="nombre" placeholder="Nombre completo">
+                            <div class="form-error" id="nombreError"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Correo electrónico">
+                            <div class="form-error" id="emailError"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="telefono" placeholder="Número de teléfono (ej: 3001234567)">
+                            <div class="form-error" id="telefonoError"></div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Seguridad -->
+                    <div id="step2Content" style="display: none;">
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Contraseña">
+                            <i class="fas fa-eye password-toggle" id="togglePassword" style="left: auto; right: 1rem; cursor: pointer;"></i>
+                            <div class="form-error" id="passwordError"></div>
+                        </div>
+
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="passwordStrength"></div>
+                        </div>
+                        <div class="password-strength-text" id="passwordStrengthText"></div>
+
+                        <div class="input-group">
+                            <i class="fas fa-check-circle"></i>
+                            <input type="password" id="confirmPassword" placeholder="Confirmar contraseña">
+                            <div class="form-error" id="confirmError"></div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 3: Confirmación -->
+                    <div id="step3Content" style="display: none;">
+                        <div style="text-align: center; margin-bottom: var(--spacing-xl);">
+                            <i class="fas fa-clipboard-list" style="font-size: 4rem; color: var(--color-primary); margin-bottom: var(--spacing-md);"></i>
+                            <h3>Revisa tus datos</h3>
+                            <p style="color: var(--color-gray-500);">Por favor verifica que toda la información sea correcta</p>
+                        </div>
+
+                        <div id="resumenDatos" style="background: var(--color-gray-50); padding: var(--spacing-lg); border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg);">
+                            <!-- Resumen se llenará con JavaScript -->
+                        </div>
+
+                        <div class="terms-checkbox">
+                            <label>
+                                <input type="checkbox" id="terminos">
+                                <span>Acepto los <a href="#" id="verTerminos">Términos y Condiciones</a> y la <a href="#" id="verPrivacidad">Política de Privacidad</a></span>
+                            </label>
+                            <div class="form-error" id="terminosError"></div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de navegación -->
+                    <div style="display: flex; justify-content: space-between; gap: var(--spacing-md); margin-top: var(--spacing-xl);">
+                        <button type="button" id="prevBtn" class="btn-outline-primary" style="display: none;">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" id="nextBtn" class="btn-primary" style="flex: 1;">
+                            Siguiente <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button type="submit" id="submitBtn" class="btn-register" style="display: none;">
+                            <i class="fas fa-user-check"></i> Registrarse
+                        </button>
+                    </div>
+
+                    <div class="login-link" style="margin-top: var(--spacing-lg);">
+                        ¿Ya tienes una cuenta? <a href="login.html">Inicia sesión aquí</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Términos y Condiciones -->
+    <div id="terminosModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Términos y Condiciones</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>1. Aceptación de términos</h4>
+                <p>Al registrarte en Sabores del Mar, aceptas cumplir con estos términos y condiciones.</p>
+                <h4>2. Reservas</h4>
+                <p>Las reservas están sujetas a disponibilidad. El restaurante se reserva el derecho de cancelar reservas en casos de fuerza mayor.</p>
+                <h4>3. Cancelaciones</h4>
+                <p>Las cancelaciones deben realizarse con al menos 1 hora de anticipación.</p>
+                <h4>4. Privacidad</h4>
+                <p>Tus datos personales serán tratados de acuerdo con nuestra política de privacidad.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="aceptarTerminos">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/register.js"></script>
+</body>
+</html>
