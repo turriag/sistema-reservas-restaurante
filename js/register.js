@@ -1,7 +1,7 @@
 /**
  * Sistema de Reservas de Restaurante
  * Lógica de registro - Con toasts
- * @version 2.1.0
+ * @version 2.2.0
  */
 
 console.log('🔵 register.js cargado');
@@ -43,6 +43,14 @@ class RegisterController {
         this.setupEventListeners();
         this.setupPasswordStrength();
         this.updateStepDisplay();
+        this.actualizarBotonRegistro();
+    }
+    
+    actualizarBotonRegistro() {
+        if (!this.submitBtn) return;
+        // El botón se habilita solo en el paso 3 Y con términos aceptados
+        const habilitado = (this.currentStep === this.totalSteps) && this.terminosCheckbox?.checked;
+        this.submitBtn.disabled = !habilitado;
     }
     
     setupEventListeners() {
@@ -65,6 +73,15 @@ class RegisterController {
             });
         }
         if (this.confirmInput) this.confirmInput.addEventListener('input', () => this.validateConfirmPassword());
+        
+        // ============================================
+        // CORRECCIÓN: Habilitar botón cuando se aceptan términos
+        // ============================================
+        if (this.terminosCheckbox) {
+            this.terminosCheckbox.addEventListener('change', () => {
+                this.actualizarBotonRegistro();
+            });
+        }
         
         const togglePassword = document.getElementById('togglePassword');
         if (togglePassword) {
@@ -92,7 +109,10 @@ class RegisterController {
         const aceptarTerminos = document.getElementById('aceptarTerminos');
         if (aceptarTerminos) {
             aceptarTerminos.addEventListener('click', () => {
-                if (this.terminosCheckbox) this.terminosCheckbox.checked = true;
+                if (this.terminosCheckbox) {
+                    this.terminosCheckbox.checked = true;
+                    this.actualizarBotonRegistro();
+                }
                 this.hideModal();
             });
         }
@@ -103,6 +123,7 @@ class RegisterController {
             if (this.currentStep < this.totalSteps) {
                 this.currentStep++;
                 this.updateStepDisplay();
+                this.actualizarBotonRegistro();
             }
         }
     }
@@ -111,6 +132,7 @@ class RegisterController {
         if (this.currentStep > 1) {
             this.currentStep--;
             this.updateStepDisplay();
+            this.actualizarBotonRegistro();
         }
     }
     
@@ -132,7 +154,10 @@ class RegisterController {
             }
         }
         
-        if (this.currentStep === 3) this.updateResumen();
+        if (this.currentStep === 3) {
+            this.updateResumen();
+            this.actualizarBotonRegistro();
+        }
     }
     
     validateCurrentStep() {
@@ -305,13 +330,14 @@ class RegisterController {
             console.log('Registrando:', userData.email);
             
             // 1. Registrar en Supabase Auth
-            const { error: authError } = await supabaseClient.auth.signUp({
+            const { data, error: authError } = await supabaseClient.auth.signUp({
                 email: userData.email,
                 password: userData.password,
                 options: {
                     data: {
                         nombre: userData.nombre
-                    }
+                    },
+                    emailRedirectTo: window.location.origin + '/confirmar-email.html'
                 }
             });
             
